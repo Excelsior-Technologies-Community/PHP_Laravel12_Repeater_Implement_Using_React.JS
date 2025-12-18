@@ -104,7 +104,24 @@ export default defineConfig({
 
 ---
 
-## Step 4: Configure .env File
+## Step 4: Create React Entry File (app.js) 
+
+File: resources/js/app.js
+
+```
+/**
+ * Main JavaScript entry file for Laravel + React
+ * Vite loads this file first
+ */
+
+// Import React component
+import './GalleryForm.jsx';
+```
+
+---
+
+
+## Step 5: Configure .env File
 
 Open your .env file and configure your database connection:
 
@@ -130,7 +147,7 @@ This will create the database repeater_db.
 ---
 
 
-## Step 5: Create Model & Migration (Gallery)
+## Step 6: Create Model & Migration (Gallery)
 
 Run the following command to create the Gallery model along with its migration file:
 
@@ -145,7 +162,7 @@ app/Models/Gallery.php → Model
 database/migrations/2025_12_17_000000_create_galleries_table.php → Migration
 
 
-#### 5.1 Galleries Migration
+#### 6.1 Galleries Migration
 
 Open database/migrations/2025_12_17_000000_create_galleries_table.php:
 
@@ -208,7 +225,7 @@ return new class extends Migration {
 };
 ```
 
-#### 5.2 Gallery Model
+#### 6.2 Gallery Model
 
 Open app/Models/Gallery.php and update it as follows:
 
@@ -256,7 +273,7 @@ $fillable → Allows mass assignment when using Gallery::create() or update()
 $casts → Converts images JSON column into an array automatically
 
 
-#### 5.3 Run Migration
+#### 6.3 Run Migration
 
 After setting up the model and migration, run:
 
@@ -270,7 +287,7 @@ This will create the galleries table in the database.
 ---
 
 
-## Step 6: Create Storage Symlink (Important)
+## Step 7: Create Storage Symlink (Important)
 
 Since gallery images are uploaded to:
 
@@ -287,7 +304,7 @@ php artisan storage:link
 ---
 
 
-## Step 7: Create Controller
+## Step 8: Create Controller
 
 Generate the controller:
 
@@ -429,7 +446,7 @@ class GalleryController extends Controller
 ---
 
 
-## Step 8: Add Routes
+## Step 9: Add Routes
 
 File: routes/web.php:
 
@@ -464,7 +481,7 @@ Route::post('/gallery/{id}/delete', [GalleryController::class, 'destroy'])->name
 ---
 
 
-## Step 9: Create React Component
+## Step 10: Create React Component
 
 Create resources/js/GalleryForm.jsx:
 
@@ -754,7 +771,7 @@ createRoot(document.getElementById('app')).render(
 ---
 
 
-## Step 10: Create Blade Template
+## Step 11: Create Blade Template
 
 Create resources/views/gallery.blade.php:
 
@@ -798,7 +815,7 @@ Create resources/views/gallery.blade.php:
 ---
 
 
-## Step 11: Run the Application
+## Step 12: Run the Application
 
 #### 1) Start Laravel Server
 
