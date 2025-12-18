@@ -30,9 +30,9 @@ PHP_Laravel12_Repeater_Implement_Using_React.JS/
 ├── public/
 │   ├── storage/                        # Symbolic link (created by `php artisan storage:link`)
 │   │   └── gallery/                    # Publicly accessible gallery images
-│   
 ├── resources/
 │   ├── js/
+│   │   ├── app.js                       # React entry file that imports/mounts GalleryForm.jsx
 │   │   └── GalleryForm.jsx             # React component for gallery form and index (list)
 │   └── views/
 │       └── gallery.blade.php           # Blade template that mounts the React app
@@ -43,8 +43,8 @@ PHP_Laravel12_Repeater_Implement_Using_React.JS/
 │       └── public/
 │           └── gallery/                # Uploaded gallery images are stored here
 ├── .env                                # Environment configuration file (DB, APP_URL, etc.)
-└── README.md                           # Project documentation with setup instructions
-├── vite.config.js                      # Vite configuration file for Laravel + React + Tailwind
+├── README.md                           # Project documentation with setup instructions
+└── vite.config.js                      # Vite configuration file for Laravel + React + Tailwind
 ```
 
 
