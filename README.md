@@ -864,3 +864,12 @@ http://127.0.0.1:8000/gallery
 ---
 
 Your PHP_Laravel12_Repeater_Implement_Using_React.JS Project is Now Ready!
+<<<<<<< HEAD
+=======
+
+
+
+
+
+
+>>>>>>> development
