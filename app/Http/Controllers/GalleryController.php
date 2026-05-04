@@ -4,13 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Gallery;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class GalleryController extends Controller
 {
-    /**
-     * Display all gallery records.
-     * Pass galleries to Blade for React.
-     */
     public function index(Request $request)
     {
         $search = $request->query('search', '');
@@ -29,7 +26,6 @@ class GalleryController extends Controller
             $query->where('status', $status);
         }
 
-        // Get all galleries
         $galleries = $query->orderBy('id', 'asc')->get();
 
         return view('gallery.index', [
@@ -37,14 +33,12 @@ class GalleryController extends Controller
         ]);
     }
 
-    /**
-     * Store a new gallery record with multiple images.
-     */
     public function store(Request $request)
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'images.*' => 'image|mimes:jpg,jpeg,png'
+            'description' => 'required|string',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048'
         ]);
 
         $paths = [];
@@ -55,20 +49,21 @@ class GalleryController extends Controller
             }
         }
 
-        Gallery::create([
+        $gallery = Gallery::create([
             'title' => $request->title,
             'description' => $request->description,
             'images' => $paths,
             'status' => $request->status,
-            'created_by' => 1, // replace with auth()->id() if needed
+            'created_by' => 1, 
         ]);
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Gallery created!', 'data' => $gallery]);
+        }
 
         return redirect()->back()->with('success', 'Gallery created successfully');
     }
 
-    /**
-     * Fetch a single gallery for editing.
-     */
     public function edit($id)
     {
         $gallery = Gallery::findOrFail($id);
@@ -79,22 +74,18 @@ class GalleryController extends Controller
         ]);
     }
 
-    /**
-     * Update gallery, keeping existing images and adding new.
-     */
     public function update(Request $request, $id)
     {
         $gallery = Gallery::findOrFail($id);
 
         $request->validate([
             'title' => 'required|string|max:255',
-            'images.*' => 'image|mimes:jpg,jpeg,png'
+            'description' => 'required|string',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048'
         ]);
 
-        // Keep existing images from hidden input
         $paths = $request->input('existing_images', []);
 
-        // Add new uploaded images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $img) {
                 $paths[] = $img->store('gallery', 'public');
@@ -106,20 +97,45 @@ class GalleryController extends Controller
             'description' => $request->description,
             'images' => $paths,
             'status' => $request->status,
-            'updated_by' => 1, // replace with auth()->id() if needed
+            'updated_by' => 1, 
         ]);
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Gallery updated!']);
+        }
 
         return redirect()->back()->with('success', 'Gallery updated successfully');
     }
 
-    /**
-     * Delete a gallery record.
-     */
     public function destroy($id)
     {
         $gallery = Gallery::findOrFail($id);
+
+        if ($gallery->images) {
+            foreach ($gallery->images as $img) {
+                Storage::disk('public')->delete($img);
+            }
+        }
+
         $gallery->delete();
 
         return response()->json(['success' => true]);
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        $galleries = Gallery::whereIn('id', $ids)->get();
+
+        foreach ($galleries as $gallery) {
+            if ($gallery->images) {
+                foreach ($gallery->images as $img) {
+                    Storage::disk('public')->delete($img);
+                }
+            }
+            $gallery->delete();
+        }
+
+        return response()->json(['success' => true, 'message' => 'Selected galleries deleted']);
     }
 }
